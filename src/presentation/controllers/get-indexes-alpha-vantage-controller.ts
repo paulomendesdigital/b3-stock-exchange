@@ -4,12 +4,12 @@ import { badRequest } from '../helpers/http-helper'
 
 export class GetIndexesAlphaVantageController {
   handle (httpRequest: HttpRequest): HttpResponse {
-    if (!httpRequest.body.api_key) {
-      return badRequest(new MissingParamError('api_key'))
-    }
+    const requiredFields = ['api_key', 'function']
 
-    if (!httpRequest.body.function) {
-      return badRequest(new MissingParamError('function'))
+    for (const field of requiredFields) {
+      if (!httpRequest.body[field]) {
+        return badRequest(new MissingParamError(field))
+      }
     }
 
     return {
