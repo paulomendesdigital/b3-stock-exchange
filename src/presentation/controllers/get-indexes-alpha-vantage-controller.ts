@@ -4,7 +4,7 @@ import { badRequest } from '../helpers/http-helper'
 
 export class GetIndexesAlphaVantageController {
   handle (httpRequest: HttpRequest): HttpResponse {
-    const requiredFields = ['api_key', 'function']
+    const requiredFields = ['api_key', 'function', 'symbol']
 
     for (const field of requiredFields) {
       if (!httpRequest.body[field]) {
