@@ -1,0 +1,13 @@
+
+include:
+- project: 'team/appsec/snyk'
+  file: '/.snyk.yaml'
+
+stages:
+  - test
+
+variables:
+    SNYK_ORG: $SNYK_ORG_FISICO_RH_TECH
+    SNYK_TOKEN: $SNYK_TOKEN_ORG_FISICO_RH_TECH
+    SNYK_PROJECTS: --all-projects
+    NPM_VERSION: "14.19.1"

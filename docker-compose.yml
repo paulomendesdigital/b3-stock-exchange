@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  sirius:
+    build: .
+    container_name: sirius
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/app
+    env_file:
+      - .env
