@@ -1,4 +1,5 @@
 import { GetIndexesAlphaVantageController } from '../../../src/presentation/controllers/get-indexes-alpha-vantage-controller'
+import { MissingParamError } from '../../../src/presentation/errors/missing-param-error'
 
 describe('GetIndexesAlphaVantageController', () => {
   test('Should return 400 if no api key is provided', () => {
@@ -11,7 +12,7 @@ describe('GetIndexesAlphaVantageController', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Missing param: api_key'))
+    expect(httpResponse.body).toEqual(new MissingParamError('api_key'))
   })
 
   test('Should return 400 if no function is provided', () => {
@@ -24,6 +25,6 @@ describe('GetIndexesAlphaVantageController', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Missing param: function'))
+    expect(httpResponse.body).toEqual(new MissingParamError('function'))
   })
 })
