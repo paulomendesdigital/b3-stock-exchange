@@ -11,6 +11,19 @@ describe('GetIndexesAlphaVantageController', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Missing param: name'))
+    expect(httpResponse.body).toEqual(new Error('Missing param: api_key'))
+  })
+
+  test('Should return 400 if no function is provided', () => {
+    const sut = new GetIndexesAlphaVantageController()
+    const httpRequest = {
+      body: {
+        api_key: 'any_api_key',
+        symbol: 'any_symbol'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('Missing param: function'))
   })
 })
