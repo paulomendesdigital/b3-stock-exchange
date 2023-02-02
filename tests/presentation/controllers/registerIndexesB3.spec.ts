@@ -27,4 +27,17 @@ describe('GetIndexesAlphaVantageController', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('function'))
   })
+
+  test('Should return 400 if no symbol is provided', () => {
+    const sut = new GetIndexesAlphaVantageController()
+    const httpRequest = {
+      body: {
+        api_key: 'any_api_key',
+        function: 'any_function'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamError('symbol'))
+  })
 })
