@@ -1,9 +1,13 @@
 import { GetIndexesAlphaVantageController } from '../../../src/presentation/controllers/get-indexes-alpha-vantage-controller'
 import { MissingParamError } from '../../../src/presentation/errors/missing-param-error'
 
+const makeSut = (): GetIndexesAlphaVantageController => {
+  return new GetIndexesAlphaVantageController()
+}
+
 describe('GetIndexesAlphaVantageController', () => {
   test('Should return 400 if no api key is provided', () => {
-    const sut = new GetIndexesAlphaVantageController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         function: 'any_function',
@@ -16,7 +20,7 @@ describe('GetIndexesAlphaVantageController', () => {
   })
 
   test('Should return 400 if no function is provided', () => {
-    const sut = new GetIndexesAlphaVantageController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         api_key: 'any_api_key',
@@ -29,7 +33,7 @@ describe('GetIndexesAlphaVantageController', () => {
   })
 
   test('Should return 400 if no symbol is provided', () => {
-    const sut = new GetIndexesAlphaVantageController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         api_key: 'any_api_key',
