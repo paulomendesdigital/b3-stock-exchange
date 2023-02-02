@@ -1,8 +1,9 @@
 import { HttpRequest, HttpResponse } from '../../../src/presentation/protocols/http'
 import { MissingParamError } from '../errors/missing-param-error'
 import { badRequest } from '../helpers/http-helper'
+import { Controller } from '../protocols/controller'
 
-export class GetIndexesAlphaVantageController {
+export class GetIndexesAlphaVantageController implements Controller {
   handle (httpRequest: HttpRequest): HttpResponse {
     const requiredFields = ['api_key', 'function', 'symbol']
 
