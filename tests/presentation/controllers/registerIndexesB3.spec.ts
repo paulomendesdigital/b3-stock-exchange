@@ -7,14 +7,28 @@ interface SutTypes {
   getIndexesStub: IGetIndexes
 }
 
-const makeSut = (): SutTypes => {
+const makeGetIndexes = (): IGetIndexes => {
   class GetIndexesStub implements IGetIndexes {
     request (data: any): any {
       return {}
     }
   }
 
-  const getIndexesStub = new GetIndexesStub()
+  return new GetIndexesStub()
+}
+
+const makeGetIndexesWithError = (): IGetIndexes => {
+  class GetIndexesStub implements IGetIndexes {
+    request (data: any): any {
+      throw new Error()
+    }
+  }
+
+  return new GetIndexesStub()
+}
+
+const makeSut = (): SutTypes => {
+  const getIndexesStub = makeGetIndexes()
   const sut = new GetIndexesB3Controller(getIndexesStub)
 
   return {
@@ -82,13 +96,7 @@ describe('GetIndexesB3Controller', () => {
   })
 
   test('Should return 500 if GetIndexes throws', () => {
-    class GetIndexesStub implements IGetIndexes {
-      request (data: any): any {
-        throw new Error()
-      }
-    }
-
-    const getIndexesStub = new GetIndexesStub()
+    const getIndexesStub = makeGetIndexesWithError()
     const sut = new GetIndexesB3Controller(getIndexesStub)
 
     const httpRequest = {
