@@ -1,25 +1,25 @@
-import { GetIndexesB3Controller } from '../../../src/presentation/controllers/get-indexes-alpha-vantage-controller'
+import { GetIndexesB3Controller } from '../../../src/presentation/controllers/get-indexes-b3-controller'
 import { MissingParamError } from '../../../src/presentation/errors/missing-param-error'
 import { IGetIndexes } from '../../../src/presentation/interfaces/i-get-indexes'
 
 interface SutTypes {
   sut: GetIndexesB3Controller
-  getIndexesAlphaVantageStub: IGetIndexes
+  getIndexesStub: IGetIndexes
 }
 
 const makeSut = (): SutTypes => {
-  class GetIndexesAlphaVantageStub implements IGetIndexes {
+  class GetIndexesStub implements IGetIndexes {
     request (data: any): any {
       return {}
     }
   }
 
-  const getIndexesAlphaVantageStub = new GetIndexesAlphaVantageStub()
-  const sut = new GetIndexesB3Controller(getIndexesAlphaVantageStub)
+  const getIndexesStub = new GetIndexesStub()
+  const sut = new GetIndexesB3Controller(getIndexesStub)
 
   return {
     sut,
-    getIndexesAlphaVantageStub
+    getIndexesStub
   }
 }
 
@@ -63,8 +63,9 @@ describe('GetIndexesB3Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('symbol'))
   })
 
-  test('Should return 400 if no symbol is provided', () => {
-    const { sut } = makeSut()
+  test('Should call GetIndexes with correct data', () => {
+    const { sut, getIndexesStub } = makeSut()
+    const requestSpy = jest.spyOn(getIndexesStub, 'request')
     const httpRequest = {
       body: {
         api_key: 'any_api_key',
@@ -72,8 +73,11 @@ describe('GetIndexesB3Controller', () => {
         symbol: 'any_symbol'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('symbol'))
+    sut.handle(httpRequest)
+    expect(requestSpy).toHaveBeenCalledWith({
+      api_key: 'any_api_key',
+      function: 'any_function',
+      symbol: 'any_symbol'
+    })
   })
 })
