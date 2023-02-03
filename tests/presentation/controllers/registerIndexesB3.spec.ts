@@ -1,6 +1,6 @@
 import { GetIndexesB3Controller } from '../../../src/presentation/controllers/get-indexes-b3-controller'
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
-import { IGetIndexes } from '../../../src/presentation/interfaces/i-get-indexes'
+import { IGetIndexes } from '../../../src/presentation/interfaces'
 
 interface SutTypes {
   sut: GetIndexesB3Controller

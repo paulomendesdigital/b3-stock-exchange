@@ -1,8 +1,6 @@
-import { IHttpRequest, IHttpResponse } from '../interfaces/i-http'
+import { IHttpRequest, IHttpResponse, IController, IGetIndexes } from '../interfaces'
 import { MissingParamError } from '../errors'
 import { badRequest, serverError } from '../helpers/http-helper'
-import { IController } from '../interfaces/i-controller'
-import { IGetIndexes } from '../interfaces/i-get-indexes'
 
 export class GetIndexesB3Controller implements IController {
   constructor (private readonly getIndexes: IGetIndexes) {}
