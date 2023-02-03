@@ -1,9 +1,8 @@
 import { IHttpRequest, IHttpResponse } from '../interfaces/i-http'
 import { MissingParamError } from '../errors/missing-param-error'
-import { badRequest } from '../helpers/http-helper'
+import { badRequest, serverError } from '../helpers/http-helper'
 import { IController } from '../interfaces/i-controller'
 import { IGetIndexes } from '../interfaces/i-get-indexes'
-import { ServerError } from '../errors/server-error'
 
 export class GetIndexesB3Controller implements IController {
   constructor (private readonly getIndexes: IGetIndexes) {}
@@ -32,10 +31,7 @@ export class GetIndexesB3Controller implements IController {
         body: ''
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new ServerError()
-      }
+      return serverError()
     }
   }
 }
