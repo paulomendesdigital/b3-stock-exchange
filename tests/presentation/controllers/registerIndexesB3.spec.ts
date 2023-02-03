@@ -17,16 +17,6 @@ const makeGetIndexes = (): IGetIndexes => {
   return new GetIndexesStub()
 }
 
-const makeGetIndexesWithError = (): IGetIndexes => {
-  class GetIndexesStub implements IGetIndexes {
-    request (data: any): any {
-      throw new Error()
-    }
-  }
-
-  return new GetIndexesStub()
-}
-
 const makeSut = (): SutTypes => {
   const getIndexesStub = makeGetIndexes()
   const sut = new GetIndexesB3Controller(getIndexesStub)
@@ -96,8 +86,10 @@ describe('GetIndexesB3Controller', () => {
   })
 
   test('Should return 500 if GetIndexes throws', () => {
-    const getIndexesStub = makeGetIndexesWithError()
-    const sut = new GetIndexesB3Controller(getIndexesStub)
+    const { sut, getIndexesStub } = makeSut()
+    jest.spyOn(getIndexesStub, 'request').mockImplementationOnce(() => {
+      throw new Error()
+    })
 
     const httpRequest = {
       body: {
