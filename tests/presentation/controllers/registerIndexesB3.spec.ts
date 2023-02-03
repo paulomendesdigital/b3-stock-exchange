@@ -1,5 +1,6 @@
 import { GetIndexesB3Controller } from '../../../src/presentation/controllers/get-indexes-b3-controller'
 import { MissingParamError } from '../../../src/presentation/errors/missing-param-error'
+import { ServerError } from '../../../src/presentation/errors/server-error'
 import { IGetIndexes } from '../../../src/presentation/interfaces/i-get-indexes'
 
 interface SutTypes {
@@ -79,5 +80,28 @@ describe('GetIndexesB3Controller', () => {
       function: 'any_function',
       symbol: 'any_symbol'
     })
+  })
+
+  test('Should return 500 if GetIndexes throws', () => {
+    class GetIndexesStub implements IGetIndexes {
+      request (data: any): any {
+        throw new Error()
+      }
+    }
+
+    const getIndexesStub = new GetIndexesStub()
+    const sut = new GetIndexesB3Controller(getIndexesStub)
+
+    const httpRequest = {
+      body: {
+        api_key: 'any_api_key',
+        function: 'any_function',
+        symbol: 'any_symbol'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
