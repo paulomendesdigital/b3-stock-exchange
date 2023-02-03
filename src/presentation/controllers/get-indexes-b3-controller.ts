@@ -1,5 +1,5 @@
 import { IHttpRequest, IHttpResponse } from '../interfaces/i-http'
-import { MissingParamError } from '../errors/missing-param-error'
+import { MissingParamError } from '../errors'
 import { badRequest, serverError } from '../helpers/http-helper'
 import { IController } from '../interfaces/i-controller'
 import { IGetIndexes } from '../interfaces/i-get-indexes'
