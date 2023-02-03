@@ -3,7 +3,7 @@ import { MissingParamError } from '../errors/missing-param-error'
 import { badRequest } from '../helpers/http-helper'
 import { IController } from '../interfaces/i-controller'
 
-export class GetIndexesAlphaVantageController implements IController {
+export class GetIndexesB3Controller implements IController {
   handle (httpRequest: IHttpRequest): IHttpResponse {
     const requiredFields = ['api_key', 'function', 'symbol']
 
