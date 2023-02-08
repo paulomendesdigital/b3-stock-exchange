@@ -2,7 +2,7 @@ import { IHttpRequest, IHttpResponse, IController, IGetIndexes } from '../interf
 import { MissingParamError } from '../errors'
 import { badRequest, serverError } from '../helpers/http-helper'
 
-export class GetIndexesB3Controller implements IController {
+export class RegisterIndexesB3Controller implements IController {
   constructor (private readonly getIndexes: IGetIndexes) {}
 
   handle (httpRequest: IHttpRequest): IHttpResponse {

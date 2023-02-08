@@ -1,9 +1,9 @@
-import { GetIndexesB3Controller } from '../../../src/presentation/controllers/get-indexes-b3-controller'
+import { RegisterIndexesB3Controller } from '../../../src/presentation/controllers/register-indexes-b3-controller'
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
 import { IGetIndexes } from '../../../src/presentation/interfaces'
 
 interface SutTypes {
-  sut: GetIndexesB3Controller
+  sut: RegisterIndexesB3Controller
   getIndexesStub: IGetIndexes
 }
 
@@ -19,7 +19,7 @@ const makeGetIndexes = (): IGetIndexes => {
 
 const makeSut = (): SutTypes => {
   const getIndexesStub = makeGetIndexes()
-  const sut = new GetIndexesB3Controller(getIndexesStub)
+  const sut = new RegisterIndexesB3Controller(getIndexesStub)
 
   return {
     sut,
@@ -27,7 +27,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('GetIndexesB3Controller', () => {
+describe('RegisterIndexesB3Controller', () => {
   test('Should return 400 if no api key is provided', () => {
     const { sut } = makeSut()
     const httpRequest = {
