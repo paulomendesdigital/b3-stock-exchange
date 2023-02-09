@@ -1,9 +1,13 @@
 import { IHttpRequest, IHttpResponse, IController, IGetIndexes } from '../interfaces'
 import { MissingParamError } from '../errors'
 import { badRequest, serverError } from '../helpers/http-helper'
+import { IAddIndex } from '../../domain/usecases/add-index-usecase'
 
 export class RegisterIndexesB3Controller implements IController {
-  constructor (private readonly getIndexes: IGetIndexes) {}
+  constructor (
+    private readonly getIndexes: IGetIndexes,
+    private readonly addIndex: IAddIndex
+  ) {}
 
   handle (httpRequest: IHttpRequest): IHttpResponse {
     try {
@@ -17,12 +21,14 @@ export class RegisterIndexesB3Controller implements IController {
 
       const indexes = this.getIndexes.request(httpRequest.body)
 
-      if (!indexes) {
+      if (indexes.error) {
         return {
-          statusCode: 400,
-          body: ''
+          statusCode: indexes.statusCode,
+          body: indexes
         }
       }
+
+      this.addIndex.add(indexes)
 
       return {
         statusCode: 200,
