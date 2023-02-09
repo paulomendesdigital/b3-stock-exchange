@@ -1,8 +1,6 @@
-import { IndexModel } from '../../../src/domain/models/index-model'
-import { AddIndexModel, IAddIndex } from '../../../src/domain/usecases/add-index-usecase'
-import { RegisterIndexesB3Controller } from '../../../src/presentation/controllers/register-indexes-b3-controller'
+import { RegisterIndexesB3Controller } from '../../../src/presentation/controllers/register-index/register-indexes-b3-controller'
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
-import { IGetIndexes } from '../../../src/presentation/interfaces'
+import { IGetIndexes, IndexModel, AddIndexModel, IAddIndex } from '../../../src/presentation/controllers/register-index/register-index-interfaces'
 
 const makeGetIndexes = (): IGetIndexes => {
   class GetIndexesStub implements IGetIndexes {
@@ -168,5 +166,24 @@ describe('RegisterIndexesB3Controller', () => {
 
     sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(getIndexesResponse)
+  })
+
+  test('Should return 500 if AddIndex throws', () => {
+    const { sut, addIndexStub } = makeSut()
+    jest.spyOn(addIndexStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const httpRequest = {
+      body: {
+        api_key: 'any_api_key',
+        function: 'any_function',
+        symbol: 'any_symbol'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })

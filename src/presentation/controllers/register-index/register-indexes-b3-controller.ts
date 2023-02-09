@@ -1,7 +1,6 @@
-import { IHttpRequest, IHttpResponse, IController, IGetIndexes } from '../interfaces'
-import { MissingParamError } from '../errors'
-import { badRequest, serverError } from '../helpers/http-helper'
-import { IAddIndex } from '../../domain/usecases/add-index-usecase'
+import { IHttpRequest, IHttpResponse, IController, IGetIndexes, IAddIndex } from './register-index-interfaces'
+import { MissingParamError } from '../../errors'
+import { badRequest, serverError } from '../../helpers/http-helper'
 
 export class RegisterIndexesB3Controller implements IController {
   constructor (
