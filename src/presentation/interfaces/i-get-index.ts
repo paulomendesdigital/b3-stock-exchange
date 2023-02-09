@@ -1,3 +1,3 @@
-export interface IGetIndexes {
+export interface IGetIndex {
   request: (data: any) => any
 }

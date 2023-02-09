@@ -1,15 +1,15 @@
-import { RegisterIndexesB3Controller } from '../../../src/presentation/controllers/register-index/register-indexes-b3-controller'
+import { RegisterIndexController } from '../../../src/presentation/controllers/register-index/register-index-controller'
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
-import { IGetIndexes, IndexModel, AddIndexModel, IAddIndex } from '../../../src/presentation/controllers/register-index/register-index-interfaces'
+import { IGetIndex, IndexModel, AddIndexModel, IAddIndex } from '../../../src/presentation/controllers/register-index/register-index-interfaces'
 
-const makeGetIndexes = (): IGetIndexes => {
-  class GetIndexesStub implements IGetIndexes {
+const makeGetIndex = (): IGetIndex => {
+  class GetIndexStub implements IGetIndex {
     request (index: any): any {
       return {}
     }
   }
 
-  return new GetIndexesStub()
+  return new GetIndexStub()
 }
 
 const makeAddIndex = (): IAddIndex => {
@@ -33,24 +33,24 @@ const makeAddIndex = (): IAddIndex => {
 }
 
 interface SutTypes {
-  sut: RegisterIndexesB3Controller
-  getIndexesStub: IGetIndexes
+  sut: RegisterIndexController
+  getIndexStub: IGetIndex
   addIndexStub: IAddIndex
 }
 
 const makeSut = (): SutTypes => {
-  const getIndexesStub = makeGetIndexes()
+  const getIndexStub = makeGetIndex()
   const addIndexStub = makeAddIndex()
-  const sut = new RegisterIndexesB3Controller(getIndexesStub, addIndexStub)
+  const sut = new RegisterIndexController(getIndexStub, addIndexStub)
 
   return {
     sut,
-    getIndexesStub,
+    getIndexStub,
     addIndexStub
   }
 }
 
-describe('RegisterIndexesB3Controller', () => {
+describe('RegisterIndexController', () => {
   test('Should return 400 if no api key is provided', () => {
     const { sut } = makeSut()
     const httpRequest = {
@@ -90,9 +90,9 @@ describe('RegisterIndexesB3Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('symbol'))
   })
 
-  test('Should call GetIndexes with correct data', () => {
-    const { sut, getIndexesStub } = makeSut()
-    const requestSpy = jest.spyOn(getIndexesStub, 'request')
+  test('Should call GetIndex with correct data', () => {
+    const { sut, getIndexStub } = makeSut()
+    const requestSpy = jest.spyOn(getIndexStub, 'request')
     const httpRequest = {
       body: {
         api_key: 'any_api_key',
@@ -108,9 +108,9 @@ describe('RegisterIndexesB3Controller', () => {
     })
   })
 
-  test('Should return 500 if GetIndexes throws', () => {
-    const { sut, getIndexesStub } = makeSut()
-    jest.spyOn(getIndexesStub, 'request').mockImplementationOnce(() => {
+  test('Should return 500 if GetIndex throws', () => {
+    const { sut, getIndexStub } = makeSut()
+    jest.spyOn(getIndexStub, 'request').mockImplementationOnce(() => {
       throw new Error()
     })
 
@@ -128,9 +128,9 @@ describe('RegisterIndexesB3Controller', () => {
   })
 
   test('Should call AddIndex with correct values', () => {
-    const { sut, getIndexesStub, addIndexStub } = makeSut()
+    const { sut, getIndexStub, addIndexStub } = makeSut()
 
-    const getIndexesResponse = {
+    const getIndexResponse = {
       'Meta Data': {
         '1. Information': 'Weekly Adjusted Prices and Volumes',
         '2. Symbol': 'IBM',
@@ -150,8 +150,8 @@ describe('RegisterIndexesB3Controller', () => {
       }
     }
 
-    jest.spyOn(getIndexesStub, 'request').mockImplementationOnce(() => {
-      return getIndexesResponse
+    jest.spyOn(getIndexStub, 'request').mockImplementationOnce(() => {
+      return getIndexResponse
     })
 
     const addSpy = jest.spyOn(addIndexStub, 'add')
@@ -165,7 +165,7 @@ describe('RegisterIndexesB3Controller', () => {
     }
 
     sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(getIndexesResponse)
+    expect(addSpy).toHaveBeenCalledWith(getIndexResponse)
   })
 
   test('Should return 500 if AddIndex throws', () => {
