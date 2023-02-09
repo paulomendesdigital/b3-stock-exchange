@@ -1,15 +1,12 @@
+import { IndexModel } from '../../../src/domain/models/index-model'
+import { AddIndexModel, IAddIndex } from '../../../src/domain/usecases/add-index-usecase'
 import { RegisterIndexesB3Controller } from '../../../src/presentation/controllers/register-indexes-b3-controller'
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
 import { IGetIndexes } from '../../../src/presentation/interfaces'
 
-interface SutTypes {
-  sut: RegisterIndexesB3Controller
-  getIndexesStub: IGetIndexes
-}
-
 const makeGetIndexes = (): IGetIndexes => {
   class GetIndexesStub implements IGetIndexes {
-    request (data: any): any {
+    request (index: any): any {
       return {}
     }
   }
@@ -17,13 +14,41 @@ const makeGetIndexes = (): IGetIndexes => {
   return new GetIndexesStub()
 }
 
+const makeAddIndex = (): IAddIndex => {
+  class AddIndexStub implements IAddIndex {
+    add (index: AddIndexModel): IndexModel {
+      const fakeIndex = {
+        id: 'valid_id',
+        name: 'valid_name',
+        price_open: 999,
+        price_close: 999,
+        price_high: 999,
+        price_low: 999,
+        price_day: new Date()
+      }
+
+      return fakeIndex
+    }
+  }
+
+  return new AddIndexStub()
+}
+
+interface SutTypes {
+  sut: RegisterIndexesB3Controller
+  getIndexesStub: IGetIndexes
+  addIndexStub: IAddIndex
+}
+
 const makeSut = (): SutTypes => {
   const getIndexesStub = makeGetIndexes()
-  const sut = new RegisterIndexesB3Controller(getIndexesStub)
+  const addIndexStub = makeAddIndex()
+  const sut = new RegisterIndexesB3Controller(getIndexesStub, addIndexStub)
 
   return {
     sut,
-    getIndexesStub
+    getIndexesStub,
+    addIndexStub
   }
 }
 
@@ -102,5 +127,46 @@ describe('RegisterIndexesB3Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should call AddIndex with correct values', () => {
+    const { sut, getIndexesStub, addIndexStub } = makeSut()
+
+    const getIndexesResponse = {
+      'Meta Data': {
+        '1. Information': 'Weekly Adjusted Prices and Volumes',
+        '2. Symbol': 'IBM',
+        '3. Last Refreshed': '2023-02-07',
+        '4. Time Zone': 'US/Eastern'
+      },
+      'Weekly Adjusted Time Series': {
+        '2023-02-07': {
+          '1. open': '135.8300',
+          '2. high': '136.4000',
+          '3. low': '134.4500',
+          '4. close': '135.8400',
+          '5. adjusted close': '135.8400',
+          '6. volume': '8578853',
+          '7. dividend amount': '0.0000'
+        }
+      }
+    }
+
+    jest.spyOn(getIndexesStub, 'request').mockImplementationOnce(() => {
+      return getIndexesResponse
+    })
+
+    const addSpy = jest.spyOn(addIndexStub, 'add')
+
+    const httpRequest = {
+      body: {
+        api_key: 'any_api_key',
+        function: 'any_function',
+        symbol: 'any_symbol'
+      }
+    }
+
+    sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(getIndexesResponse)
   })
 })
