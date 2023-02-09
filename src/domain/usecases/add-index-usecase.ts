@@ -10,5 +10,5 @@ export interface AddIndexModel {
 }
 
 export interface IAddIndex {
-  add: (index: AddIndexModel) => IndexModel
+  add: (index: AddIndexModel) => Promise<IndexModel>
 }

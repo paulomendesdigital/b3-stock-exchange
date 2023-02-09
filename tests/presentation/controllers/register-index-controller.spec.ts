@@ -18,7 +18,7 @@ const makeGetIndex = (): IGetIndex => {
 
 const makeAddIndex = (): IAddIndex => {
   class AddIndexStub implements IAddIndex {
-    add (index: AddIndexModel): IndexModel {
+    async add (index: AddIndexModel): Promise<IndexModel> {
       const fakeIndex = {
         id: 'valid_id',
         name: 'valid_name',
@@ -29,7 +29,7 @@ const makeAddIndex = (): IAddIndex => {
         price_day: new Date()
       }
 
-      return fakeIndex
+      return await new Promise(resolve => resolve(fakeIndex))
     }
   }
 
@@ -55,7 +55,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('RegisterIndexController', () => {
-  test('Should return 400 if no api key is provided', () => {
+  test('Should return 400 if no api key is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -63,12 +63,12 @@ describe('RegisterIndexController', () => {
         symbol: 'any_symbol'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('api_key'))
   })
 
-  test('Should return 400 if no function is provided', () => {
+  test('Should return 400 if no function is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -76,12 +76,12 @@ describe('RegisterIndexController', () => {
         symbol: 'any_symbol'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('function'))
   })
 
-  test('Should return 400 if no symbol is provided', () => {
+  test('Should return 400 if no symbol is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -89,12 +89,12 @@ describe('RegisterIndexController', () => {
         function: 'any_function'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('symbol'))
   })
 
-  test('Should call GetIndex with correct data', () => {
+  test('Should call GetIndex with correct data', async () => {
     const { sut, getIndexStub } = makeSut()
     const requestSpy = jest.spyOn(getIndexStub, 'request')
     const httpRequest = {
@@ -104,7 +104,7 @@ describe('RegisterIndexController', () => {
         symbol: 'any_symbol'
       }
     }
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(requestSpy).toHaveBeenCalledWith({
       api_key: 'any_api_key',
       function: 'any_function',
@@ -112,7 +112,7 @@ describe('RegisterIndexController', () => {
     })
   })
 
-  test('Should return 500 if GetIndex throws', () => {
+  test('Should return 500 if GetIndex throws', async () => {
     const { sut, getIndexStub } = makeSut()
     jest.spyOn(getIndexStub, 'request').mockImplementationOnce(() => {
       throw new Error()
@@ -126,12 +126,12 @@ describe('RegisterIndexController', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should call AddIndex with correct values', () => {
+  test('Should call AddIndex with correct values', async () => {
     const { sut, getIndexStub, addIndexStub } = makeSut()
 
     const getIndexResponse = {
@@ -168,15 +168,13 @@ describe('RegisterIndexController', () => {
       }
     }
 
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(getIndexResponse)
   })
 
-  test('Should return 500 if AddIndex throws', () => {
+  test('Should return 500 if AddIndex throws', async () => {
     const { sut, addIndexStub } = makeSut()
-    jest.spyOn(addIndexStub, 'add').mockImplementationOnce(() => {
-      throw new Error()
-    })
+    jest.spyOn(addIndexStub, 'add').mockRejectedValueOnce(new Error())
 
     const httpRequest = {
       body: {
@@ -186,12 +184,12 @@ describe('RegisterIndexController', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should return 200 if valid data is provided', () => {
+  test('Should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -200,7 +198,7 @@ describe('RegisterIndexController', () => {
         symbol: 'valid_symbol'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       id: 'valid_id',

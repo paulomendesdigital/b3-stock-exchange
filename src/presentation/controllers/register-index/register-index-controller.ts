@@ -8,7 +8,7 @@ export class RegisterIndexController implements IController {
     private readonly addIndex: IAddIndex
   ) {}
 
-  handle (httpRequest: IHttpRequest): IHttpResponse {
+  async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const requiredFields = ['api_key', 'function', 'symbol']
 
@@ -27,7 +27,7 @@ export class RegisterIndexController implements IController {
         }
       }
 
-      const index = this.addIndex.add(apiIndex)
+      const index = await this.addIndex.add(apiIndex)
 
       return ok(index)
     } catch (error) {
