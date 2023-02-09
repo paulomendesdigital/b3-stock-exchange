@@ -2,6 +2,10 @@ import { RegisterIndexController } from '../../../src/presentation/controllers/r
 import { MissingParamError, ServerError } from '../../../src/presentation/errors'
 import { IGetIndex, IndexModel, AddIndexModel, IAddIndex } from '../../../src/presentation/controllers/register-index/register-index-interfaces'
 
+jest
+  .useFakeTimers()
+  .setSystemTime(new Date('2023-01-01'))
+
 const makeGetIndex = (): IGetIndex => {
   class GetIndexStub implements IGetIndex {
     request (index: any): any {
